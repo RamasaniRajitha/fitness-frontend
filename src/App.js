@@ -1,24 +1,62 @@
-import logo from './logo.svg';
 import './App.css';
 
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './context/authContext';
+
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Profile from './pages/Profile';
+import Page404 from './pages/Page404';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import ForgotPwd from './pages/ForgotPwd';
+import Resend from './pages/Resend';
+
 function App() {
+  const {currentUser} = useContext(AuthContext);
+
+  const RequireAuth = ({ children }) => {
+    return currentUser ? children : <Navigate to="/login" />;
+  }  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <HashRouter>
+        <Navbar />  
+        <Routes>
+          <Route path="/" element={
+            <Landing />
+          } />
+          <Route path="/login" element={
+            <Login />
+          } />
+          <Route path='/signup' element={
+            <Signup />
+          } />
+          <Route path='/reset' element={
+            <ForgotPwd />
+          } />
+          <Route path='/resend' element={
+            <Resend />
+          } />
+          <Route path='/profile' element={
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          } />
+          <Route path='/home' element={
+            <RequireAuth>
+              <Home />
+            </RequireAuth>
+          } />
+          <Route path="/*" element={
+            <Page404 />
+          } />
+        </Routes>
+      </HashRouter>
+    </>
   );
 }
 
